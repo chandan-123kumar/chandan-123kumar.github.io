@@ -41,3 +41,23 @@
   );
   sections.forEach((s) => obs.observe(s));
 })();
+
+(function () {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const metrics = document.querySelectorAll('.metric');
+  if (!metrics.length) return;
+
+  const obs = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry, idx) => {
+        if (!entry.isIntersecting) return;
+        const metric = entry.target;
+        setTimeout(() => metric.classList.add('metric-animate'), idx * 120);
+        obs.unobserve(metric);
+      });
+    },
+    { threshold: 0.4 }
+  );
+  metrics.forEach((m) => obs.observe(m));
+})();
