@@ -61,3 +61,34 @@
   );
   metrics.forEach((m) => obs.observe(m));
 })();
+
+(function () {
+  const mount = document.getElementById('writing-preview');
+  if (!mount) return;
+
+  const formatDate = (iso) => {
+    const d = new Date(iso + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  };
+
+  fetch('blog/posts.json', { cache: 'no-cache' })
+    .then((r) => { if (!r.ok) throw new Error('posts.json ' + r.status); return r.json(); })
+    .then((posts) => {
+      posts.sort((a, b) => b.date.localeCompare(a.date));
+      const latest = posts.slice(0, 4);
+      if (!latest.length) {
+        mount.innerHTML = '<p class="writing-loading">First post coming soon.</p>';
+        return;
+      }
+      mount.innerHTML = latest.map((p) => `
+        <a class="writing-card" href="blog/post.html?slug=${encodeURIComponent(p.slug)}">
+          <div class="post-meta"><span>${formatDate(p.date)}</span></div>
+          <h3>${p.title}</h3>
+          <p>${p.excerpt}</p>
+        </a>
+      `).join('');
+    })
+    .catch(() => {
+      mount.innerHTML = '<p class="writing-loading">Posts are warming up — check back soon.</p>';
+    });
+})();

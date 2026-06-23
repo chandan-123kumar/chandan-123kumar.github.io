@@ -1,0 +1,9 @@
+[
+  {
+    "slug": "hello-world",
+    "title": "Hello, world — and what I'll be writing about",
+    "date": "2026-06-23",
+    "excerpt": "Why I started this blog: agentic SDLC patterns, voice-AI engineering, and the GPU rabbit holes I keep falling into.",
+    "tags": ["meta", "ai"]
+  }
+]

@@ -485,3 +485,47 @@ body::before {
     animation: none !important;
   }
 }
+
+/* ---- Writing preview (home page) ---- */
+.writing-pitch { max-width: 720px; font-size: 1.05rem; color: var(--text); margin-bottom: 28px; }
+.writing-preview {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+@media (min-width: 768px) {
+  .writing-preview { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+}
+.writing-card {
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  display: block;
+  color: var(--text);
+  transition: border-color var(--transition), transform var(--transition);
+}
+.writing-card:hover {
+  border-color: rgba(34, 211, 238, 0.4);
+  transform: translateY(-2px);
+  opacity: 1;
+}
+.writing-card .post-meta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+.writing-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.writing-card p { color: var(--text-dim); font-size: 0.92rem; }
+.writing-loading { color: var(--text-dim); padding: 20px 0; }
+.writing-all { display: inline-flex; }
