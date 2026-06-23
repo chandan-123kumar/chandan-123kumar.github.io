@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chandan Kumar — Senior AI Engineer</title>
+  <meta name="description" content="Senior AI Engineer building agentic systems, low-latency voice AI, and GPU-accelerated inference. BrowserStack AI Champion 2025." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="canonical" href="https://chandan-123kumar.github.io/" />
+  <meta property="og:title" content="Chandan Kumar — Senior AI Engineer" />
+  <meta property="og:description" content="Agentic systems, voice AI, GPU. BrowserStack AI Champion 2025." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://chandan-123kumar.github.io/" />
+  <meta property="og:image" content="https://chandan-123kumar.github.io/assets/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Chandan Kumar — Senior AI Engineer" />
+  <meta name="twitter:description" content="Agentic systems, voice AI, GPU. BrowserStack AI Champion 2025." />
+  <meta name="twitter:image" content="https://chandan-123kumar.github.io/assets/og-image.png" />
+</head>
+<body>
+  <header class="nav" id="site-nav">
+    <div class="container nav-inner">
+      <a href="#top" class="nav-brand">Chandan Kumar</a>
+      <button class="nav-toggle" data-nav-toggle aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-menu" data-nav-menu>
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#content">Content</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </header>
+  <main id="top">
+    <section class="hero">
+      <div class="container">
+        <p class="hero-eyebrow">Senior AI Engineer — Agentic Systems, Voice AI, GPU</p>
+        <h1 class="hero-name">Chandan Kumar</h1>
+        <p class="hero-pitch">7+ years building production software. Now shipping low-latency voice agents, agentic developer tooling, and LLM fine-tuning.</p>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-value">5&times;</div>
+            <div class="metric-label">TTS speedup<br><span>Qwen3-TTS megakernel</span></div>
+          </div>
+          <div class="metric">
+            <div class="metric-value">47<span class="metric-unit">ms</span></div>
+            <div class="metric-label">Time-to-first-audio<br><span>RTX 5090</span></div>
+          </div>
+          <div class="metric">
+            <div class="metric-value">$100K<span class="metric-unit">+</span></div>
+            <div class="metric-label">ARR delivered<br><span>BrowserStack</span></div>
+          </div>
+        </div>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="resume.pdf" download>Resume</a>
+          <a class="btn btn-secondary" href="https://github.com/chandan-123kumar" target="_blank" rel="noopener">GitHub</a>
+          <a class="btn btn-secondary" href="#contact">Contact</a>
+        </div>
+      </div>
+    </section>
+    <section id="about" class="about">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">About</p>
+          <h2>Engineer-first AI builder</h2>
+        </div>
+        <p class="about-body">
+          Senior software engineer with 7+ years across <strong>JPMorgan Chase</strong> and <strong>BrowserStack</strong>, now building production AI — agentic developer tooling, low-latency voice agents, and LLM fine-tuning. Comfortable from GPU-level CUDA work to product delivery.
+        </p>
+        <p class="about-body">
+          B.Tech, Electrical Engineering from <strong>IIT (BHU) Varanasi</strong> (CGPA 9.03). Mentor of two engineers and an AI-SDLC SPOC for Growth Engineering.
+        </p>
+        <span class="badge">BrowserStack AI Champion 2025</span>
+      </div>
+    </section>
+    <section id="projects" class="projects">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Featured Projects</p>
+          <h2>What I'm shipping</h2>
+        </div>
+        <div class="project-grid">
+          <article class="project-card">
+            <h3>Qwen3-TTS Megakernel</h3>
+            <p>Persistent-kernel CUDA megakernel repurposed as the talker decoder for Qwen3-TTS (0.6B). 47&nbsp;ms median TTFB and 0.145 RTF on RTX 5090 — 5&times; faster than the stock pipeline. Diagnosed and fixed a grid-barrier race deadlock; verified numerical parity against HF reference.</p>
+            <div class="chips">
+              <span class="chip">CUDA</span>
+              <span class="chip">Qwen3-TTS</span>
+              <span class="chip">bf16</span>
+            </div>
+            <a class="project-link" href="https://github.com/chandan-123kumar/voice_stream" target="_blank" rel="noopener">View on GitHub &rarr;</a>
+          </article>
+
+          <article class="project-card">
+            <h3>Real-Time Voice Agent</h3>
+            <p>Full WebSocket voice agent (mic &rarr; faster-whisper STT &rarr; gpt-4o-mini &rarr; megakernel TTS &rarr; speaker) on Pipecat with Silero VAD endpointing, barge-in, and 9 switchable voices. Cut speech-end-to-first-reply latency 2–3.7&times; to 0.7–1.1&nbsp;s by colocating STT on the GPU.</p>
+            <div class="chips">
+              <span class="chip">Pipecat</span>
+              <span class="chip">Whisper</span>
+              <span class="chip">Silero VAD</span>
+            </div>
+            <a class="project-link" href="https://github.com/chandan-123kumar/voice_stream" target="_blank" rel="noopener">View on GitHub &rarr;</a>
+          </article>
+
+          <article class="project-card">
+            <h3>SDD Context Engine</h3>
+            <p>Python FastMCP server exposing custom tools (feature-knowledge queries, dev-phase activation, mocking helpers) that injects codebase-grounded context into Claude Code / Copilot. Drives the org-wide 6-phase agentic Spec-Driven Development pipeline at BrowserStack.</p>
+            <div class="chips">
+              <span class="chip">FastMCP</span>
+              <span class="chip">Python</span>
+              <span class="chip">Claude Code</span>
+            </div>
+            <span class="project-link project-link--muted">BrowserStack — internal</span>
+          </article>
+
+          <article class="project-card">
+            <h3>Indic LLM Fine-Tuning</h3>
+            <p>Fine-tuned open-source LLMs (Qwen) for Indic languages using QLoRA. Evaluated tokenizers and compared SFT vs. continued pretraining on Indic corpora.</p>
+            <div class="chips">
+              <span class="chip">QLoRA</span>
+              <span class="chip">Qwen</span>
+              <span class="chip">SFT</span>
+            </div>
+            <a class="project-link" href="https://github.com/chandan-123kumar" target="_blank" rel="noopener">View on GitHub &rarr;</a>
+          </article>
+        </div>
+      </div>
+    </section>
+    <section id="experience" class="experience">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Experience</p>
+          <h2>Where I've worked</h2>
+        </div>
+        <div class="timeline">
+          <article class="role">
+            <header class="role-head">
+              <h3>Senior Software Engineer — BrowserStack</h3>
+              <span class="role-date">Oct 2024 — Present</span>
+            </header>
+            <ul class="role-bullets">
+              <li>Drove org-wide adoption of a 6-phase agentic Spec-Driven Development pipeline — cutting dev time ~50% and story bugs up to 70% on new initiatives.</li>
+              <li>Built the SDD Context Engine (Python FastMCP) and owned an agentic AI harness with 11 skills and 7 phase-specific agents.</li>
+              <li>Led AI-driven Nightwatch &rarr; Playwright test migration; shipped AI code review as a deploy gate.</li>
+            </ul>
+          </article>
+
+          <article class="role">
+            <header class="role-head">
+              <h3>Software Engineer — BrowserStack</h3>
+              <span class="role-date">Mar 2022 — Sep 2024</span>
+            </header>
+            <ul class="role-bullets">
+              <li>Built a self-serve promotional engine and upsell workflows across Pro plans; $100K+ ARR across retention initiatives.</li>
+              <li>End-to-end marketing-attribution system (UTM tracking, cross-page activity, Salesforce sync).</li>
+            </ul>
+          </article>
+
+          <article class="role">
+            <header class="role-head">
+              <h3>Associate Software Engineer — JPMorgan Chase</h3>
+              <span class="role-date">Mar 2020 — Mar 2022</span>
+            </header>
+            <ul class="role-bullets">
+              <li>Built a Spring Boot + React monitoring and alerting tool tracking 26 applications across stacks; mentored an offshore team for ~1 year.</li>
+            </ul>
+          </article>
+
+          <article class="role">
+            <header class="role-head">
+              <h3>Software Engineer (SDE 1) — JPMorgan Chase</h3>
+              <span class="role-date">Jul 2019 — Mar 2020</span>
+            </header>
+            <ul class="role-bullets">
+              <li>Built an end-to-end Spring Boot application for the SPG mortgage-analytics platform — the entry and exit point for all securitized-product analysis at JPMC.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+    <section id="content" class="content">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Content</p>
+          <h2>I teach AI system design</h2>
+        </div>
+        <p class="content-body">
+          I create AI system-design education for engineers on Instagram and YouTube — multi-agent patterns, LangChain / LangGraph / CrewAI, distributed systems, and database internals.
+        </p>
+        <div class="content-ctas">
+          <a class="btn btn-secondary" href="https://www.instagram.com/ai_system_design" target="_blank" rel="noopener">Instagram &mdash; @ai_system_design</a>
+          <a class="btn btn-secondary" href="#" aria-disabled="true">YouTube (coming soon)</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills" class="skills">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Skills</p>
+          <h2>What I work with</h2>
+        </div>
+        <div class="skill-row">
+          <div class="skill-label">AI / GenAI</div>
+          <div class="chips">
+            <span class="chip">LLM fine-tuning (QLoRA, SFT)</span>
+            <span class="chip">RAG</span>
+            <span class="chip">Multi-agent systems</span>
+            <span class="chip">Agentic SDLC</span>
+            <span class="chip">AI code review</span>
+            <span class="chip">Prompt &amp; context engineering</span>
+            <span class="chip">Agent evaluation</span>
+          </div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-label">Agent Frameworks</div>
+          <div class="chips">
+            <span class="chip">LangChain</span>
+            <span class="chip">LangGraph</span>
+            <span class="chip">CrewAI</span>
+            <span class="chip">MCP / FastMCP</span>
+          </div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-label">Voice AI</div>
+          <div class="chips">
+            <span class="chip">Pipecat</span>
+            <span class="chip">Twilio</span>
+            <span class="chip">ElevenLabs</span>
+            <span class="chip">Cartesia</span>
+            <span class="chip">Whisper / faster-whisper</span>
+            <span class="chip">Silero VAD</span>
+            <span class="chip">Qwen3-TTS</span>
+          </div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-label">Languages</div>
+          <div class="chips">
+            <span class="chip">Python</span>
+            <span class="chip">Java (Spring Boot)</span>
+            <span class="chip">JavaScript / React</span>
+            <span class="chip">C</span>
+            <span class="chip">Bash</span>
+            <span class="chip">SQL</span>
+          </div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-label">Systems &amp; Infra</div>
+          <div class="chips">
+            <span class="chip">CUDA / GPU programming</span>
+            <span class="chip">FastAPI</span>
+            <span class="chip">Docker</span>
+            <span class="chip">PostgreSQL</span>
+            <span class="chip">Redis</span>
+            <span class="chip">Kafka</span>
+            <span class="chip">MongoDB</span>
+            <span class="chip">AWS</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="contact">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Contact</p>
+          <h2>Let's talk</h2>
+        </div>
+        <p class="contact-pitch">Open to senior AI / GenAI roles, voice-agent work, and speaking. Fastest reply via email.</p>
+        <div class="contact-ctas">
+          <a class="btn btn-primary" href="mailto:chandan.kumar.stack@gmail.com">Email me</a>
+          <a class="btn btn-secondary" href="resume.pdf" download>Download resume</a>
+        </div>
+        <ul class="contact-links">
+          <li><a href="mailto:chandan.kumar.stack@gmail.com">chandan.kumar.stack@gmail.com</a></li>
+          <li><a href="https://www.linkedin.com/in/chandan-kumar-100a78111/" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="https://github.com/chandan-123kumar" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="https://www.instagram.com/ai_system_design" target="_blank" rel="noopener">Instagram</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2026 Chandan Kumar</p>
+    </div>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
