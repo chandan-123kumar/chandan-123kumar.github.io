@@ -52,7 +52,8 @@
   color: var(--text-dim);
   font-size: 0.95rem;
 }
-.post-tags { display: flex; gap: 6px; }
+.post-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.post-meta { flex-wrap: wrap; }
 .post-tag {
   font-size: 0.75rem;
   color: var(--accent);
@@ -84,6 +85,7 @@
   color: var(--text);
   margin-bottom: 12px;
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 .post-header .post-meta { color: var(--text-dim); font-size: 0.9rem; }
 

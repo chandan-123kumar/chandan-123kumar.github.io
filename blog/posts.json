@@ -1,5 +1,12 @@
 [
   {
+    "slug": "2026-10-07-building-my-coding-agent",
+    "title": "Building my coding agent: memory, tools, and the execution loop",
+    "date": "2026-10-07",
+    "excerpt": "From a single chat request to a model–tool loop: conversation memory, file tools, shell execution, and what I've checked so far.",
+    "tags": ["build-log", "ai-harness"]
+  },
+  {
     "slug": "hello-world",
     "title": "Hello, world — and what I'll be writing about",
     "date": "2026-06-23",
