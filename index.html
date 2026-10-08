@@ -29,6 +29,7 @@
         <span></span><span></span><span></span>
       </button>
       <ul class="nav-menu" data-nav-menu>
+        <li><a href="#karyo">Try Karyo</a></li>
         <li><a href="#about">About</a></li>
         <li><a href="#projects">Projects</a></li>
         <li><a href="#experience">Experience</a></li>
@@ -44,6 +45,21 @@
         <p class="hero-eyebrow">Senior AI Engineer — Agentic Systems, Voice AI, GPU</p>
         <h1 class="hero-name">Chandan Kumar</h1>
         <p class="hero-pitch">7+ years building production software. Now shipping low-latency voice agents, agentic developer tooling, and LLM fine-tuning.</p>
+        <article class="karyo-highlight" id="karyo" aria-labelledby="karyo-title">
+          <p class="eyebrow">Now available · Public preview</p>
+          <h2 id="karyo-title">Meet Karyo. Your terminal coding assistant.</h2>
+          <p class="karyo-intro">I'm opening up Karyo for everyone to try with limited capabilities. Work with files, run shell commands, and search your codebase with a coding assistant powered by Qwen3-Coder-Next.</p>
+          <div class="karyo-terminal">
+            <div class="karyo-command-head"><span>1. Install · macOS / Linux / Windows (WSL)</span><button type="button" class="copy-command" data-copy-command="karyo-install" hidden>Copy install command</button></div>
+            <pre><code id="karyo-install">curl -fsSL https://raw.githubusercontent.com/chandan-123kumar/karyo/main/install.sh | sh</code></pre>
+            <div class="karyo-command-head"><span>2. Open a new terminal and launch in your project</span><button type="button" class="copy-command" data-copy-command="karyo-launch" hidden>Copy launch commands</button></div>
+            <pre><code id="karyo-launch">cd your-project
+karyo</code></pre>
+          </div>
+          <p class="karyo-note">Setup opens in your browser. Bring your own <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener">Hugging Face token</a> with <strong>Make calls to Inference Providers</strong> permission and inference credits/billing. Replace <code>your-project</code> with your project folder. Install <code>ripgrep</code> to enable code search.</p>
+          <div class="karyo-footer"><a class="btn btn-primary" href="https://github.com/chandan-123kumar/karyo" target="_blank" rel="noopener">Explore Karyo on GitHub &rarr;</a><span class="karyo-status" role="status" aria-live="polite"></span></div>
+          <p class="karyo-note karyo-permissions">Karyo can edit files and run shell commands with your user permissions. Try it in a project you trust and keep backups.</p>
+        </article>
         <div class="metrics">
           <div class="metric">
             <div class="metric-value">5&times;</div>

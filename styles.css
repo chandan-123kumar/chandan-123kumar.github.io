@@ -529,3 +529,27 @@ body::before {
 .writing-card p { color: var(--text-dim); font-size: 0.92rem; }
 .writing-loading { color: var(--text-dim); padding: 20px 0; }
 .writing-all { display: inline-flex; }
+
+/* Karyo public preview */
+.karyo-highlight {
+  margin: 0 0 40px;
+  padding: clamp(20px, 4vw, 32px);
+  border: 1px solid rgba(34, 211, 238, 0.4);
+  border-radius: var(--radius);
+  background: linear-gradient(120deg, rgba(34, 211, 238, 0.09), rgba(167, 139, 250, 0.08));
+  scroll-margin-top: 88px;
+}
+.karyo-highlight h2 { font-size: clamp(1.5rem, 3vw, 2rem); margin-bottom: 14px; }
+.karyo-intro { max-width: 800px; color: var(--text); }
+.karyo-terminal { margin: 22px 0 16px; background: #080b13; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.karyo-command-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 18px 0; color: var(--text-dim); font-size: 0.8rem; }
+.karyo-terminal pre { padding: 14px 18px 18px; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--accent); font-size: 0.9rem; }
+.karyo-terminal pre + .karyo-command-head { border-top: 1px solid var(--border); }
+.copy-command { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; cursor: pointer; font: inherit; }
+.copy-command:hover { border-color: var(--accent); }
+.copy-command:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.karyo-note { font-size: 0.85rem; max-width: 850px; }
+.karyo-footer { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 20px; }
+.karyo-status { font-size: 0.85rem; color: var(--accent); }
+.karyo-permissions { margin-top: 16px; }
+@media (min-width: 768px) { .nav-menu { gap: 20px; } }

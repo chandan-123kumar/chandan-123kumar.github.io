@@ -92,3 +92,24 @@
       mount.innerHTML = '<p class="writing-loading">Posts are warming up — check back soon.</p>';
     });
 })();
+
+(function () {
+  const status = document.querySelector('.karyo-status');
+  document.querySelectorAll('[data-copy-command]').forEach((button) => {
+    button.hidden = false;
+    button.addEventListener('click', async () => {
+      const command = document.getElementById(button.dataset.copyCommand);
+      try {
+        await navigator.clipboard.writeText(command.textContent);
+        status.textContent = 'Copied to clipboard.';
+      } catch (_) {
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(command);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        status.textContent = 'Command selected. Press Ctrl+C or ⌘C to copy.';
+      }
+    });
+  });
+})();
