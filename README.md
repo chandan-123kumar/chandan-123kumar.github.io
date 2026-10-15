@@ -31,7 +31,7 @@ Open http://localhost:8000.
 
 - Copy: edit `index.html`.
 - Visual style: edit CSS custom properties in `styles.css`.
-- Resume PDF: replace `resume.pdf`.
+- Resume PDF: replace `chandan_resume.pdf`.
 - YouTube URL: search `script.js` and `index.html` for `href="#"` and update.
 
 ## Daily progress blog
