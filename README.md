@@ -35,7 +35,7 @@ Open http://localhost:8000.
 - YouTube URL: search `script.js` and `index.html` for `href="#"` and update.
 
 ## Daily progress blog
-
+#
 The existing blog lives at `blog/index.html`. Markdown articles in `blog/posts/`
 are listed in `blog/posts.json`; the homepage automatically shows the newest posts.
 The daily build log documents building my personal assistant and coding agent,
