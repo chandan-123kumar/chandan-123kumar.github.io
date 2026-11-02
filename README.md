@@ -68,3 +68,9 @@ After each working session:
 This is an ongoing session-based writing workflow. It does not invent updates
 on inactive days or schedule automatic publishing. The source directory can be
 served unchanged; no new build step or service is required.
+
+## AI engineering learning portal
+
+The new `/learn/` portal runs on Vercel with an Express API. It supports instructor-provided username/password credentials through Vercel environment variables, Day 1 learning material, a quiz, reflections and browser-local streaks. There is no database or subscription system in this version.
+
+See [LEARNING-PORTAL.md](LEARNING-PORTAL.md) for exact variables, local preview, Vercel deployment and current limitations. The static-only GitHub Pages instructions above still apply to the original portfolio; portal authentication requires the Node/Vercel runtime.
