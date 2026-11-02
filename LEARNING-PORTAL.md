@@ -1,6 +1,12 @@
 # Learning portal at /learn/
 
-The existing homepage, blog and assets are retained. `/learn/` is a public course overview; its **Learn** button opens the minimal sign-in screen at `/learn/#login`. The new portal adds server-checked username/password sign-in, student and instructor views, the completed Day 1 lesson, a Python lab download, three knowledge-check questions, a reflection journal and daily streaks. There is no public signup or subscription. Accounts can use MongoDB Atlas or the original environment-based configuration.
+The existing homepage, blog and assets are retained. `/learn/` is a public course overview; its **Learn** button opens the lesson directly while public access is enabled. The minimal instructor sign-in screen remains at `/learn/#login`. The new portal adds server-checked username/password sign-in, student and instructor views, the completed Day 1 lesson, a Python lab download, three knowledge-check questions, a reflection journal and daily streaks. There is no public signup or subscription. Accounts can use MongoDB Atlas or the original environment-based configuration.
+
+## Public learning access (current mode)
+
+The course is public by default. **Learn** opens Day 1 directly; lesson reading, the Python download, quizzes, reflections and browser-local streaks work without an account, session secret or MongoDB connection. Instructor endpoints still require authenticated admin access and never use the public learner identity.
+
+Set `COURSE_PUBLIC=false` in Vercel and redeploy when you want student login again. `COURSE_PUBLISHED=false` still hides the lesson. Public progress is stored under a browser-specific guest profile; it is not automatically merged into an account later. Devices sharing a browser also share that public progress.
 
 ## MongoDB Atlas accounts
 

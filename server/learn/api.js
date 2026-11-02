@@ -32,6 +32,12 @@ export function createLearnAPI(configOverride, env=process.env, storeOverride) {
     const bucket=limits.get(key) || {count:0,until:now+15*60*1000};
     bucket.count++; limits.set(key,bucket); return bucket.count<=max;
   };
+  const publicAccess=env.COURSE_PUBLIC!=='false';
+  const published=config?.published ?? env.COURSE_PUBLISHED!=='false';
+  router.use((req,res,next)=>{res.set('Cache-Control','no-store');next();});
+  router.get('/access',(req,res)=>res.json({publicAccess,published,today:dayKey()}));
+  // Public learning routes do not depend on account setup or database connectivity.
+  if(publicAccess && published)router.use(createCourseAPI());
   router.use((req,res,next)=>{
     res.set('Cache-Control','no-store');
     if(!config) return res.status(503).json({error:setupError});
@@ -76,26 +82,32 @@ export function createLearnAPI(configOverride, env=process.env, storeOverride) {
     if(!config.published && req.learnUser.role!=='admin') return res.status(403).json({error:'The course is not published yet. Please check back with your instructor.'});
     next();
   });
-  router.get('/lesson',async(req,res)=>{
+  router.use(createCourseAPI());
+  router.use((err,req,res,next)=>{
+    console.error('Learn request failed:',err.name);res.status(store?503:500).json({error:store?'The account database is unavailable. Check the MongoDB connection and network access, then try again.':'Something went wrong. Please try again.'});
+  });
+  return router;
+}
+
+function createCourseAPI(){
+  const course=express.Router();
+  course.get('/lesson',async(req,res)=>{
     const source=await readFile(new URL('day-01.md',contentURL),'utf8');
     const html=sanitizeHtml(marked.parse(source),{allowedTags:sanitizeHtml.defaults.allowedTags.concat(['details','summary']),allowedAttributes:{a:['href','title','rel'],code:['class']},transformTags:{a:sanitizeHtml.simpleTransform('a',{rel:'noopener noreferrer'})}});
     res.json({html,quiz:QUIZ.map(({answer,explanation,...q})=>q)});
   });
-  router.get('/lab',(req,res)=>res.download(fileURLToPath(new URL('day-01-lab.py',contentURL)),'day-01-lab.py'));
-  router.post('/quiz',(req,res)=>{
+  course.get('/lab',(req,res)=>res.download(fileURLToPath(new URL('day-01-lab.py',contentURL)),'day-01-lab.py'));
+  course.post('/quiz',(req,res)=>{
     const answers=req.body?.answers;
     if(!Array.isArray(answers) || answers.length!==QUIZ.length || answers.some(a=>!Number.isInteger(a) || a<0 || a>2)) return res.status(400).json({error:'Answer all three questions first.'});
     const results=QUIZ.map((q,i)=>({correct:q.answer===answers[i],explanation:q.explanation}));
     const score=results.filter(r=>r.correct).length;
     res.json({score,total:QUIZ.length,passed:score===QUIZ.length,results,today:dayKey()});
   });
-  router.post('/reflection',(req,res)=>{
+  course.post('/reflection',(req,res)=>{
     const note=req.body?.note;
     if(typeof note!=='string' || note.trim().length<40 || note.length>10000) return res.status(400).json({error:'Write a reflection of 40–10,000 characters to record a learning day.'});
     res.json({ok:true,today:dayKey()});
   });
-  router.use((err,req,res,next)=>{
-    console.error('Learn request failed:',err.name);res.status(store?503:500).json({error:store?'The account database is unavailable. Check the MongoDB connection and network access, then try again.':'Something went wrong. Please try again.'});
-  });
-  return router;
+  return course;
 }

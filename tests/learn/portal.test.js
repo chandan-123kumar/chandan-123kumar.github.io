@@ -4,7 +4,7 @@ import express from 'express';
 import {loadConfig,verifyPassword,signSession,readSession,csrfFor,dayKey} from '../../server/learn/auth.js';
 import {createLearnAPI} from '../../server/learn/api.js';
 import {streaks,readProgress,writeProgress} from '../../learn/progress.js';
-const env={SESSION_SECRET:'test-only-secret-32-characters-long!!',APP_ORIGIN:'http://127.0.0.1:3047',ADMIN_USERNAME:'teacher',ADMIN_PASSWORD:'test-admin-password',STUDENT_USERNAME:'learner',STUDENT_PASSWORD:'test-student-password',STUDENT_NAME:'Test Learner'};
+const env={SESSION_SECRET:'test-only-secret-32-characters-long!!',APP_ORIGIN:'http://127.0.0.1:3047',ADMIN_USERNAME:'teacher',ADMIN_PASSWORD:'test-admin-password',STUDENT_USERNAME:'learner',STUDENT_PASSWORD:'test-student-password',STUDENT_NAME:'Test Learner',COURSE_PUBLIC:'false'};
 const config=loadConfig(env);
 
 test('credentials are checked on the server; username duplicates fail closed',()=>{
@@ -44,7 +44,7 @@ test('browser progress remains separate for each username and survives reload',(
  assert.equal(readProgress('bob',storage).note,'');
 });
 test('API integration: authentication, roles, CSRF, quiz, reflection, downloads and logout',async t=>{
- const app=express();app.use('/api/learn',express.json(),createLearnAPI(config));
+ const app=express();app.use('/api/learn',express.json(),createLearnAPI(config,env));
  const server=app.listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));t.after(()=>server.close());
  const base=`http://127.0.0.1:${server.address().port}/api/learn`;
  const request=(path,body,headers={})=>fetch(base+path,{method:body===undefined?'GET':'POST',headers:{'Content-Type':'application/json',Origin:config.origin,...headers},...(body===undefined?{}:{body:JSON.stringify(body)})});
@@ -93,7 +93,7 @@ test('setup errors identify the setting without exposing credential values',asyn
 
 test('MongoDB accounts bypass credential env vars, hash passwords and enforce account roles',async t=>{
  const {buildUser}=await import('../../server/learn/mongo-users.js');
- const settings={SESSION_SECRET:env.SESSION_SECRET,APP_ORIGIN:env.APP_ORIGIN,MONGODB_URI:'mongodb://127.0.0.1:27017'};
+ const settings={COURSE_PUBLIC:'false',SESSION_SECRET:env.SESSION_SECRET,APP_ORIGIN:env.APP_ORIGIN,MONGODB_URI:'mongodb://127.0.0.1:27017'};
  const mongoConfig=loadConfig(settings);assert.equal(mongoConfig.accountStorage,'mongodb');
  const teacher=buildUser({username:'instructor',name:'Instructor',password:'test-teacher-password',role:'admin'});
  const learner=buildUser({username:'sravan',name:'Sravan',password:'test-sravan-password'});
@@ -124,4 +124,18 @@ test('account creation explains validation and database failures without leaking
  assert.ok(!accountCreationError({name:'MongoServerError',code:8000,message:'unrelated failure'}).includes('authentication failed'));
  assert.match(accountCreationError({name:'MongoServerSelectionError',message:'private-secret'}),/Network Access/);
  assert.ok(!accountCreationError(new Error('private-secret')).includes('private-secret'));
+});
+
+test('public lessons work without credentials or database access while admin endpoints stay protected',async t=>{
+ const app=express();app.use('/api/learn',express.json(),createLearnAPI(undefined,{COURSE_PUBLIC:'true'}));
+ const server=app.listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));t.after(()=>server.close());
+ const base=`http://127.0.0.1:${server.address().port}/api/learn`;
+ const metadata=await (await fetch(base+'/access')).json();assert.equal(metadata.publicAccess,true);
+ assert.equal((await fetch(base+'/lesson')).status,200);assert.equal((await fetch(base+'/lab')).status,200);
+ const result=await fetch(base+'/quiz',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers:[1,2,0]})});assert.equal((await result.json()).passed,true);
+ assert.equal((await fetch(base+'/reflection',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({note:'My reflection explains why correct transport does not guarantee a correct answer.'})})).status,200);
+ assert.equal((await fetch(base+'/admin')).status,503);
+ const authenticated=express();authenticated.use('/api/learn',express.json(),createLearnAPI(config,{COURSE_PUBLIC:'true'}));
+ const protectedServer=authenticated.listen(0,'127.0.0.1');await new Promise(r=>protectedServer.once('listening',r));t.after(()=>protectedServer.close());
+ assert.equal((await fetch(`http://127.0.0.1:${protectedServer.address().port}/api/learn/admin`)).status,401);
 });
