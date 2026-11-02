@@ -90,3 +90,28 @@ test('setup errors identify the setting without exposing credential values',asyn
   finally{server.close();}
  }
 });
+
+test('MongoDB accounts bypass credential env vars, hash passwords and enforce account roles',async t=>{
+ const {buildUser}=await import('../../server/learn/mongo-users.js');
+ const settings={SESSION_SECRET:env.SESSION_SECRET,APP_ORIGIN:env.APP_ORIGIN,MONGODB_URI:'mongodb://127.0.0.1:27017'};
+ const mongoConfig=loadConfig(settings);assert.equal(mongoConfig.accountStorage,'mongodb');
+ const teacher=buildUser({username:'instructor',name:'Instructor',password:'test-teacher-password',role:'admin'});
+ const learner=buildUser({username:'sravan',name:'Sravan',password:'test-sravan-password'});
+ assert.equal(learner.password,undefined);assert.notEqual(learner.passwordHash,learner.password);
+ const documents=[teacher,learner];
+ const store={find:async username=>{const u=documents.find(u=>u.username===username && u.active);return u?{...u,salt:Buffer.from(u.salt,'hex')}:null;},list:async()=>documents,create:async data=>{const u=buildUser(data);if(documents.some(x=>x.username===u.username)){const e=new Error();e.code=11000;throw e;}documents.push(u);return u;}};
+ const app=express();app.use('/api/learn',express.json(),createLearnAPI(mongoConfig,settings,store));
+ const server=app.listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));t.after(()=>server.close());
+ const base=`http://127.0.0.1:${server.address().port}/api/learn`;
+ const call=(path,body,headers={})=>fetch(base+path,{method:body?'POST':'GET',headers:{Origin:settings.APP_ORIGIN,'Content-Type':'application/json',...headers},...(body?{body:JSON.stringify(body)}:{})});
+ const signin=async(username,password)=>{const r=await call('/login',{username,password});assert.equal(r.status,200);return {Cookie:r.headers.get('set-cookie').split(';')[0],'x-learn-csrf':(await r.json()).csrf};};
+ const h=await signin('instructor','test-teacher-password');
+ const newStudent={username:'meera',name:'Meera',password:'test-meera-password',role:'admin'};
+ assert.equal((await call('/admin/users',newStudent,h)).status,201);
+ assert.equal(documents.find(u=>u.username==='meera').role,'student');
+ assert.equal((await call('/admin/users',newStudent,h)).status,409);
+ const sh=await signin('sravan','test-sravan-password');
+ assert.equal((await call('/admin/users',newStudent,sh)).status,403);
+ learner.active=false;assert.equal((await call('/me',undefined,sh)).status,401);
+ learner.active=true;learner.version='0'.repeat(64);assert.equal((await call('/me',undefined,sh)).status,401);
+});

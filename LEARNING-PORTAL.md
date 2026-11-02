@@ -1,8 +1,41 @@
 # Learning portal at /learn/
 
-The existing homepage, blog and assets are retained. `/learn/` is a public course overview; its **Learn** button opens the minimal sign-in screen at `/learn/#login`. The new portal adds server-checked username/password sign-in, student and instructor views, the completed Day 1 lesson, a Python lab download, three knowledge-check questions, a reflection journal and daily streaks. There is no signup, subscription, database or Supabase integration in this version.
+The existing homepage, blog and assets are retained. `/learn/` is a public course overview; its **Learn** button opens the minimal sign-in screen at `/learn/#login`. The new portal adds server-checked username/password sign-in, student and instructor views, the completed Day 1 lesson, a Python lab download, three knowledge-check questions, a reflection journal and daily streaks. There is no public signup or subscription. Accounts can use MongoDB Atlas or the original environment-based configuration.
 
-## Vercel environment variables
+## MongoDB Atlas accounts
+
+The Atlas project `6aa52909b665e18a5597cf6f` has a `chandan_learn.users` collection, with a unique `username` index and strict document validation. It starts empty; no plaintext account passwords have been inserted.
+
+To enable MongoDB login, set these Vercel Production variables:
+
+```env
+MONGODB_URI=your-private-Atlas-driver-connection-string
+MONGODB_DB=chandan_learn
+APP_ORIGIN=https://www.chandan.live
+SESSION_SECRET=your-existing-session-secret
+```
+
+Use the exact origin students visit, including `www` if applicable. Keep `MONGODB_URI` server-only; it contains the database account's credentials. The database account is separate from student/instructor portal accounts. Give the application database account read/write access only to `chandan_learn`, and configure Atlas Network Access for the hosting environment. The app does not change network allowlists or database-user permissions.
+
+When `MONGODB_URI` is set, MongoDB is the sole source of portal accounts. `ADMIN_PASSWORD`, `STUDENT_PASSWORD` and `STUDENTS_JSON` are ignored; an unavailable database does not cause fallback to environment credentials. Until the connection string is added, the existing environment-based login continues to work.
+
+To create the initial instructor, use Node.js 24 locally, put `MONGODB_URI` and `MONGODB_DB` in the ignored `.env` file, and run:
+
+```sh
+npm run user:create
+```
+
+Enter the username, display name, role `admin` and a password when prompted. The password input is hidden and is stored only as a salted scrypt hash. You can run the same command with role `student` for Sravan. Duplicate usernames are rejected. No credentials are automatically copied from Vercel or the old configuration.
+
+After redeploying with the MongoDB variables, sign in as the instructor, open **Students**, and use **Add a student**. Students cannot call this endpoint or assign themselves an instructor role. Share the initial credentials privately. `active: false` disables an account and its existing sessions. Password resets made outside the application must also rotate `version` to invalidate prior sessions; the account-creation tool never overwrites an existing account.
+
+The account documents contain `username`, `name`, `role`, `active`, `passwordHash`, `salt`, `version`, `createdAt` and `updatedAt`. There is no plaintext `password` field. These are application users, not Atlas database access users.
+
+`npm run db:setup` idempotently applies the validator and unique index to a new environment; an account with collection/index administration privileges is required for that one-time command. The normal application does not change the schema on login. Account queries reuse one MongoClient connection pool per server instance.
+
+Notes, course progress and streaks remain browser-local. This change moves accounts into MongoDB; it does not migrate learning activity.
+
+## Environment-based accounts (when MONGODB_URI is unset)
 
 In the Vercel project connected to this repository, open **Settings → Environment Variables**. Add the variables below to the Production environment and redeploy. Use separate credentials and the exact deployment origin when testing a Preview deployment.
 
@@ -71,9 +104,9 @@ npm run build
 
 ## Authentication details and limits
 
-Credentials are read only on the server; passwords are compared through scrypt-derived hashes. Eight-hour signed sessions use HttpOnly, SameSite=Strict cookies, with Secure enabled on Vercel. Mutating requests require the configured origin; authenticated mutations also require a session-bound CSRF token. Role checks and lesson-publication checks run on the server. Protected responses have `Cache-Control: no-store`.
+Credentials are read only on the server, from MongoDB when configured or otherwise from environment variables; passwords are compared through scrypt-derived hashes. Eight-hour signed sessions use HttpOnly, SameSite=Strict cookies, with Secure enabled on Vercel. Mutating requests require the configured origin; authenticated mutations also require a session-bound CSRF token. Role checks and lesson-publication checks run on the server. Protected responses have `Cache-Control: no-store`.
 
-Signing out clears the browser cookie. With no database, a copied session token cannot be individually revoked before expiry; changing the corresponding password or rotating `SESSION_SECRET` and redeploying invalidates it. Login throttling is per running server instance, not a shared global counter across Vercel instances. For a publicly exposed cohort, use Vercel Firewall login rate limiting; a future persistent auth service can supply shared throttling and session revocation. Treat the browser’s editable progress as a personal study aid, not an auditable academic record.
+Signing out clears the browser cookie. In environment mode, a copied session token cannot be individually revoked before expiry; changing the corresponding password or rotating `SESSION_SECRET` and redeploying invalidates it. Login throttling is per running server instance, not a shared global counter across Vercel instances. For a publicly exposed cohort, use Vercel Firewall login rate limiting; a future persistent auth service can supply shared throttling and session revocation. Treat the browser’s editable progress as a personal study aid, not an auditable academic record.
 
 ## Content editing
 

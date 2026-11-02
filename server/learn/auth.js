@@ -12,6 +12,11 @@ export function loadConfig(env=process.env) {
   catch { throw new ConfigurationError('APP_ORIGIN must be a valid website origin, such as https://www.chandan.live.'); }
   const production=env.NODE_ENV==='production' || Boolean(env.VERCEL);
   if(production && !origin.startsWith('https://')) throw new ConfigurationError('APP_ORIGIN must use HTTPS in production.');
+  if(env.MONGODB_URI){
+    if(!/^mongodb(?:\+srv)?:\/\//.test(env.MONGODB_URI))throw new ConfigurationError('MONGODB_URI must be a MongoDB connection string.');
+    if(!/^[a-zA-Z0-9_-]{1,63}$/.test(env.MONGODB_DB || 'chandan_learn'))throw new ConfigurationError('MONGODB_DB must be a valid database name.');
+    return {secret,origin,production,users:[],accountStorage:'mongodb',published:env.COURSE_PUBLISHED!=='false'};
+  }
   let entries=[];
   if(env.ADMIN_USERNAME && env.ADMIN_PASSWORD) entries.push({username:env.ADMIN_USERNAME,password:env.ADMIN_PASSWORD,name:env.ADMIN_NAME || 'Instructor',role:'admin'});
   if(env.STUDENT_USERNAME && env.STUDENT_PASSWORD) entries.push({username:env.STUDENT_USERNAME,password:env.STUDENT_PASSWORD,name:env.STUDENT_NAME || 'Student',role:'student'});
@@ -47,15 +52,18 @@ export function signSession(user,config,now=Date.now()) {
   const payload=Buffer.from(JSON.stringify({sub:user.username,v:user.version,exp:now+8*60*60*1000,nonce:randomBytes(24).toString('hex')})).toString('base64url');
   return `${payload}.${createHmac('sha256',config.secret).update(payload).digest('base64url')}`;
 }
-export function readSession(token,config,now=Date.now()) {
+export function sessionData(token,config,now=Date.now()) {
   if(typeof token!=='string' || token.length>2048) return null;
   const [payload,sig,extra]=token.split('.');
   if(!payload || !sig || extra || !eq(sig,createHmac('sha256',config.secret).update(payload).digest('base64url'))) return null;
   try {
     const data=JSON.parse(Buffer.from(payload,'base64url').toString());
-    const user=config.users.find(u=>u.username===data.sub && eq(u.version,data.v || ''));
-    return user && Number.isFinite(data.exp) && data.exp>now ? user : null;
+    return typeof data.sub==='string' && /^[a-z0-9_.-]{3,40}$/.test(data.sub) && typeof data.v==='string' && Number.isFinite(data.exp) && data.exp>now ? data : null;
   } catch {return null;}
+}
+export function readSession(token,config,now=Date.now()) {
+  const data=sessionData(token,config,now);
+  return data?config.users.find(u=>u.username===data.sub && eq(u.version,data.v)) || null:null;
 }
 export const csrfFor=(token,config)=>createHmac('sha256',config.secret).update('csrf:'+token).digest('hex');
 export function parseCookie(header='') {

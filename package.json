@@ -9,12 +9,15 @@
   "scripts": {
     "dev": "node --env-file-if-exists=.env scripts/learn-dev.js",
     "build": "node scripts/build-site.js",
-    "test": "node --test tests/learn/*.test.js"
+    "test": "node --test tests/learn/*.test.js",
+    "db:setup": "node --env-file-if-exists=.env scripts/learn-mongo-setup.js",
+    "user:create": "node --env-file-if-exists=.env scripts/learn-create-user.js"
   },
   "dependencies": {
     "express": "^5.1.0",
+    "helmet": "^8.1.0",
     "marked": "^15.0.12",
-    "sanitize-html": "^2.17.0",
-    "helmet": "^8.1.0"
+    "mongodb": "^6.21.0",
+    "sanitize-html": "^2.18.1"
   }
 }
