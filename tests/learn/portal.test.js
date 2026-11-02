@@ -74,3 +74,19 @@ test('unpublished lessons are inaccessible to students, but previewable by instr
  const server=app.listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));t.after(()=>server.close());
  for(const user of config.users){const r=await fetch(`http://127.0.0.1:${server.address().port}/api/learn/lesson`,{headers:{Cookie:'chandan_learn='+signSession(user,config)}});assert.equal(r.status,user.role==='admin'?200:403);}
 });
+
+test('setup errors identify the setting without exposing credential values',async t=>{
+ const cases=[
+  [{...env,SESSION_SECRET:''},'SESSION_SECRET'],
+  [{...env,ADMIN_PASSWORD:''},'ADMIN_USERNAME and ADMIN_PASSWORD'],
+  [{...env,ADMIN_PASSWORD:'private-x'},'ADMIN_PASSWORD'],
+  [{...env,STUDENTS_JSON:'private-malformed-json'},'STUDENTS_JSON'],
+  [{...env,APP_ORIGIN:'private-invalid-origin'},'APP_ORIGIN']
+ ];
+ for(const [settings,expected] of cases){
+  const app=express();app.use('/api/learn',createLearnAPI(undefined,settings));
+  const server=app.listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));
+  try{const response=await fetch(`http://127.0.0.1:${server.address().port}/api/learn/me`);assert.equal(response.status,503);const data=await response.json();assert.ok(data.error.includes(expected));assert.ok(!data.error.includes('private-'));}
+  finally{server.close();}
+ }
+});

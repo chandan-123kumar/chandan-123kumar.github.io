@@ -1,33 +1,40 @@
 import { createHash, createHmac, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 
+export class ConfigurationError extends Error {}
+
 export const COOKIE = 'chandan_learn';
 const eq = (a, b) => { const x=Buffer.from(a), y=Buffer.from(b); return x.length===y.length && timingSafeEqual(x,y); };
 export function loadConfig(env=process.env) {
   const secret=env.SESSION_SECRET || '';
-  if (secret.length<32) throw new Error('Set SESSION_SECRET to at least 32 random characters.');
-  const origin=new URL(env.APP_ORIGIN || 'http://127.0.0.1:3047').origin;
+  if (secret.length<32) throw new ConfigurationError('Set SESSION_SECRET to at least 32 random characters.');
+  let origin;
+  try { origin=new URL(env.APP_ORIGIN || 'http://127.0.0.1:3047').origin; }
+  catch { throw new ConfigurationError('APP_ORIGIN must be a valid website origin, such as https://www.chandan.live.'); }
   const production=env.NODE_ENV==='production' || Boolean(env.VERCEL);
-  if(production && !origin.startsWith('https://')) throw new Error('APP_ORIGIN must use HTTPS in production.');
+  if(production && !origin.startsWith('https://')) throw new ConfigurationError('APP_ORIGIN must use HTTPS in production.');
   let entries=[];
   if(env.ADMIN_USERNAME && env.ADMIN_PASSWORD) entries.push({username:env.ADMIN_USERNAME,password:env.ADMIN_PASSWORD,name:env.ADMIN_NAME || 'Instructor',role:'admin'});
   if(env.STUDENT_USERNAME && env.STUDENT_PASSWORD) entries.push({username:env.STUDENT_USERNAME,password:env.STUDENT_PASSWORD,name:env.STUDENT_NAME || 'Student',role:'student'});
   if(env.STUDENTS_JSON) {
-    const extra=JSON.parse(env.STUDENTS_JSON);
-    if(!Array.isArray(extra) || extra.length>100) throw new Error('STUDENTS_JSON must be an array with at most 100 students.');
+    let extra;
+    try { extra=JSON.parse(env.STUDENTS_JSON); }
+    catch { throw new ConfigurationError('STUDENTS_JSON must contain a valid JSON array. Leave it unset when using only STUDENT_USERNAME and STUDENT_PASSWORD.'); }
+    if(!Array.isArray(extra) || extra.length>100) throw new ConfigurationError('STUDENTS_JSON must be an array with at most 100 students.');
     entries.push(...extra.map(u=>({...u,role:'student'})));
   }
   const seen=new Set();
   const users=entries.map(u=>{
+    if(!u || typeof u!=='object') throw new ConfigurationError('Each STUDENTS_JSON entry must contain a username and password.');
     const username=String(u.username || '').trim().toLowerCase();
-    if(!/^[a-z0-9_.-]{3,40}$/.test(username) || seen.has(username)) throw new Error('Use unique usernames of 3–40 letters, digits, dots, dashes or underscores.');
-    if(typeof u.password!=='string' || u.password.length<12 || u.password.length>256) throw new Error('Each password must be 12–256 characters.');
+    if(!/^[a-z0-9_.-]{3,40}$/.test(username) || seen.has(username)) throw new ConfigurationError('Use unique usernames of 3–40 letters, digits, dots, dashes or underscores.');
+    if(typeof u.password!=='string' || u.password.length<12 || u.password.length>256) throw new ConfigurationError('ADMIN_PASSWORD, STUDENT_PASSWORD and passwords in STUDENTS_JSON must each be 12–256 characters.');
     seen.add(username);
     const salt=createHmac('sha256',secret).update(username).digest();
     const passwordHash=scryptSync(u.password,salt,64).toString('hex');
     const version=createHmac('sha256',secret).update(username+':'+passwordHash+':'+u.role).digest('hex');
     return {username,name:String(u.name || username).slice(0,80),role:u.role,passwordHash,salt,version};
   });
-  if(!users.some(u=>u.role==='admin')) throw new Error('Set ADMIN_USERNAME and ADMIN_PASSWORD.');
+  if(!users.some(u=>u.role==='admin')) throw new ConfigurationError('Set ADMIN_USERNAME and ADMIN_PASSWORD.');
   return {secret,origin,production,users,published:env.COURSE_PUBLISHED!=='false'};
 }
 export const publicUser = ({username,name,role})=>({username,name,role});

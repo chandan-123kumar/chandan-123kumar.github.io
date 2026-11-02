@@ -3,7 +3,7 @@ import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {marked} from 'marked';
 import sanitizeHtml from 'sanitize-html';
-import {loadConfig,publicUser,verifyPassword,signSession,readSession,csrfFor,parseCookie,setSessionCookie,dayKey} from './auth.js';
+import {ConfigurationError,loadConfig,publicUser,verifyPassword,signSession,readSession,csrfFor,parseCookie,setSessionCookie,dayKey} from './auth.js';
 
 const contentURL=new URL('../../content/learn/',import.meta.url);
 const QUIZ=[
@@ -11,10 +11,14 @@ const QUIZ=[
   {question:'The only source is an expired policy. What should the application do?',options:['Treat it as the latest policy.','Guess the current answer from the model’s memory.','Flag the stale evidence and avoid claiming a current answer.'],answer:2,explanation:'Evidence needs a source, version and applicable date. Stale facts cannot establish current policy.'},
   {question:'Which information belongs in a safe run ledger?',options:['Run ID, latency, source version and error category.','API token and full authorization header.','Only the final answer, without its source.'],answer:0,explanation:'Record enough to diagnose a run without leaking credentials.'}
 ];
-export function createLearnAPI(configOverride) {
+export function createLearnAPI(configOverride, env=process.env) {
   const router=express.Router();
-  let config;
-  try {config=configOverride || loadConfig();} catch { /* Missing or invalid configuration disables login without exposing secrets. */ }
+  let config, setupError='The learning portal needs its server environment configured. Ask the instructor to finish setup.';
+  try {config=configOverride || loadConfig(env);}
+  catch (err) {
+    // Only our fixed validation messages are safe to return; never expose raw parser errors.
+    if(err instanceof ConfigurationError) setupError='Portal setup: '+err.message+' Update the Production environment variables in Vercel and redeploy.';
+  }
   // Deliberately instance-local for this small no-database sample; see deployment notes.
   const limits=new Map();
   const throttle=(key,max)=>{
@@ -26,7 +30,7 @@ export function createLearnAPI(configOverride) {
   };
   router.use((req,res,next)=>{
     res.set('Cache-Control','no-store');
-    if(!config) return res.status(503).json({error:'The learning portal needs its server environment configured. Ask the instructor to finish setup.'});
+    if(!config) return res.status(503).json({error:setupError});
     if(!['GET','HEAD','OPTIONS'].includes(req.method) && req.get('origin')!==config.origin) return res.status(403).json({error:'This request must come from the course website.'});
     next();
   });
