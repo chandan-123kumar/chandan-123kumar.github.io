@@ -115,3 +115,11 @@ test('MongoDB accounts bypass credential env vars, hash passwords and enforce ac
  learner.active=false;assert.equal((await call('/me',undefined,sh)).status,401);
  learner.active=true;learner.version='0'.repeat(64);assert.equal((await call('/me',undefined,sh)).status,401);
 });
+
+test('account creation explains validation and database failures without leaking secrets',async()=>{
+ const {buildUser,accountCreationError}=await import('../../server/learn/mongo-users.js');
+ try{buildUser({username:'sravan',name:'Sravan',role:'student',password:'short'});assert.fail('Expected password validation');}catch(err){assert.match(accountCreationError(err),/12–256/);}
+ for(const [code,message] of [[11000,/already exists/],[18,/authentication failed/],[13,/permission/],[121,/schema/]])assert.match(accountCreationError({code,message:'private-secret'}),message);
+ assert.match(accountCreationError({name:'MongoServerSelectionError',message:'private-secret'}),/Network Access/);
+ assert.ok(!accountCreationError(new Error('private-secret')).includes('private-secret'));
+});
