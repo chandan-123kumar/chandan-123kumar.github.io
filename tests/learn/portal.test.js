@@ -120,6 +120,8 @@ test('account creation explains validation and database failures without leaking
  const {buildUser,accountCreationError}=await import('../../server/learn/mongo-users.js');
  try{buildUser({username:'sravan',name:'Sravan',role:'student',password:'short'});assert.fail('Expected password validation');}catch(err){assert.match(accountCreationError(err),/12–256/);}
  for(const [code,message] of [[11000,/already exists/],[18,/authentication failed/],[13,/permission/],[121,/schema/]])assert.match(accountCreationError({code,message:'private-secret'}),message);
+ assert.match(accountCreationError({name:'MongoServerError',code:8000,message:'bad auth : authentication failed'}),/MongoDB authentication failed/);
+ assert.ok(!accountCreationError({name:'MongoServerError',code:8000,message:'unrelated failure'}).includes('authentication failed'));
  assert.match(accountCreationError({name:'MongoServerSelectionError',message:'private-secret'}),/Network Access/);
  assert.ok(!accountCreationError(new Error('private-secret')).includes('private-secret'));
 });

@@ -28,7 +28,7 @@ export function createMongoUserStore(env=process.env){
 export function accountCreationError(err){
   if(err instanceof UserValidationError)return err.message;
   if(err.code===11000)return 'That username already exists. Use another username; the existing account was not changed.';
-  if(err.code===18)return 'MongoDB authentication failed. Check the database username and password in MONGODB_URI.';
+  if(err.code===18 || (err.code===8000 && /auth|credential|SCRAM/i.test(String(err.message || ''))))return 'MongoDB authentication failed. Check the Atlas DATABASE user username and password in MONGODB_URI (not the portal account password). URL-encode special characters in the database password.';
   if(err.code===13)return 'The MongoDB database user needs read/write permission on chandan_learn.';
   if(err.code===121)return 'MongoDB rejected the user document. Check that the users collection uses the portal schema.';
   if(err.name==='MongoParseError')return 'MONGODB_URI is invalid. Check the Atlas connection string and URL-encode special characters in its password.';
