@@ -34,9 +34,9 @@ To add/remove an account, change its password, or change publication status, edi
 ## Deployment
 
 1. Commit and push the reviewed changes to the repository connected to Vercel.
-2. Set the project’s **Root Directory** to the repository root. Use the **Express** framework preset (or let Vercel detect it). Remove any old static-site Output Directory override; Express serves generated `public/` assets itself through Vercel’s CDN.
+2. Set the project’s **Root Directory** to the repository root. Use the **Other** framework preset. The committed configuration sets the output directory to `public` and uses a Node.js function for the API.
 3. The committed `vercel.json` runs `npm run build`. The build copies only the existing public website files and the portal frontend into `public/`; it does not copy server source, environment files or the lesson source directory.
-4. Add the environment variables, then deploy/redeploy. `app.js` exports the Express application. The authenticated API is `/api/learn/*`; lesson source files are included in the function bundle.
+4. Add the environment variables, then deploy/redeploy. `api/learn/[...path].js` exports the shared Express application from `app.js`. The authenticated API is `/api/learn/*`; lesson source files are included in the function bundle.
 5. Open `https://chandan.live/learn/`. Verify an instructor login and a student login. The homepage navigation has a **Learn AI** link.
 
 Do not deploy this authenticated portal as a static-only GitHub Pages site: GitHub Pages cannot execute the Node login API. The repository name can remain `chandan-123kumar.github.io`; Vercel is the runtime host. The lesson source remains visible to readers of this public source repository; the login protects the running portal, not the GitHub repository.
