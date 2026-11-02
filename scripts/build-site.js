@@ -1,3 +1,4 @@
+import './build-sanitizer.js';
 import {mkdir,cp,copyFile,rm} from 'node:fs/promises';
 // Generated output only. Never copy the repository root or environment files.
 await rm('public',{recursive:true,force:true});

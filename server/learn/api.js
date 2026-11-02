@@ -3,7 +3,7 @@ import express from 'express';
 import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {marked} from 'marked';
-import sanitizeHtml from 'sanitize-html';
+import sanitizeHtml from './generated-sanitizer.cjs';
 import {ConfigurationError,loadConfig,publicUser,verifyPassword,signSession,readSession,sessionData,csrfFor,parseCookie,setSessionCookie,dayKey} from './auth.js';
 
 const contentURL=new URL('../../content/learn/',import.meta.url);
