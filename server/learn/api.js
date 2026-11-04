@@ -68,7 +68,7 @@ export function createLearnAPI(configOverride, env=process.env, storeOverride) {
   router.post('/logout',(req,res)=>{setSessionCookie(res,'',config);res.json({ok:true});});
   router.get('/admin',async(req,res)=>{
     if(req.learnUser.role!=='admin') return res.status(403).json({error:'Instructor access is required.'});
-    res.json({users:(store?await store.list():config.users).map(u=>({...publicUser(u),active:u.active!==false})),accountStorage:store?'mongodb':'environment',published:config.published,lessonCount:1,moduleCount:1});
+    res.json({users:(store?await store.list():config.users).map(u=>({...publicUser(u),active:u.active!==false})),accountStorage:store?'mongodb':'environment',published:config.published,lessonCount:2,moduleCount:1});
   });
   router.post('/admin/users',async(req,res)=>{
     if(req.learnUser.role!=='admin')return res.status(403).json({error:'Instructor access is required.'});
@@ -92,9 +92,17 @@ export function createLearnAPI(configOverride, env=process.env, storeOverride) {
 function createCourseAPI(){
   const course=express.Router();
   course.get('/lesson',async(req,res)=>{
-    const source=await readFile(new URL('day-01.md',contentURL),'utf8');
+    const day=req.query.day ?? '1';
+    if(!['1','2'].includes(day))return res.status(404).json({error:'Lesson not found.'});
+    const source=await readFile(new URL(day==='2'?'day-02.md':'day-01.md',contentURL),'utf8');
     const html=sanitizeHtml(marked.parse(source),{allowedTags:sanitizeHtml.defaults.allowedTags.concat(['details','summary']),allowedAttributes:{a:['href','title','rel'],code:['class']},transformTags:{a:sanitizeHtml.simpleTransform('a',{rel:'noopener noreferrer'})}});
-    res.json({html,quiz:QUIZ.map(({answer,explanation,...q})=>q)});
+    res.json({html,day:Number(day),quiz:day==='2'?[]:QUIZ.map(({answer,explanation,...q})=>q)});
+  });
+  const day2Files=new Set(['chunk.py','embedding.py','retrieve.py','vector_key.py','fetch_techqa.py','documents.json','requirements.txt','README.md','READING.md','test_lab.py']);
+  course.get('/day2/lab',(req,res)=>res.download(fileURLToPath(new URL('day-02-lab.zip',contentURL)),'day-02-lab.zip'));
+  course.get('/day2/files/:filename',(req,res)=>{
+    if(!day2Files.has(req.params.filename))return res.status(404).json({error:'Lab file not found.'});
+    res.download(fileURLToPath(new URL('day-02/'+req.params.filename,contentURL)),req.params.filename);
   });
   course.get('/lab',(req,res)=>res.download(fileURLToPath(new URL('day-01-lab.py',contentURL)),'day-01-lab.py'));
   course.post('/quiz',(req,res)=>{

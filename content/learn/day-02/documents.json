@@ -1,0 +1,20 @@
+[
+  {
+    "id": "atlas-access",
+    "title": "Account access",
+    "source": "authored-warmup-v1",
+    "text": "A forgotten password can be reset from the account sign-in page. The recovery link expires after fifteen minutes. If the link has expired, request a new recovery email."
+  },
+  {
+    "id": "atlas-sync",
+    "title": "Upload troubleshooting",
+    "source": "authored-warmup-v1",
+    "text": "Upload error AX-409 means that the workspace storage quota is full. Remove unused files or increase the storage allowance before retrying the upload. A network timeout requires checking the connection before another attempt."
+  },
+  {
+    "id": "atlas-plans",
+    "title": "Project limits",
+    "source": "authored-warmup-v1",
+    "text": "Atlas Basic allows three active projects per workspace. Archived projects do not count toward the active-project limit. Atlas Pro allows twenty active projects per workspace."
+  }
+]

@@ -1,6 +1,6 @@
 # Learning portal at /learn/
 
-The existing homepage, blog and assets are retained. `/learn/` is a public course overview; its **Learn** button opens the lesson directly while public access is enabled. The minimal instructor sign-in screen remains at `/learn/#login`. The new portal adds server-checked username/password sign-in, student and instructor views, the completed Day 1 lesson, a Python lab download, three knowledge-check questions, a reflection journal and daily streaks. There is no public signup or subscription. Accounts can use MongoDB Atlas or the original environment-based configuration.
+The existing homepage, blog and assets are retained. `/learn/` is a public course overview; its **Learn** button opens the lesson directly while public access is enabled. The minimal instructor sign-in screen remains at `/learn/#login`. The new portal adds server-checked username/password sign-in, student and instructor views, Days 1 and 2, a Python lab download, three knowledge-check questions, a reflection journal and daily streaks. There is no public signup or subscription. Accounts can use MongoDB Atlas or the original environment-based configuration.
 
 ## Public learning access (current mode)
 
@@ -121,4 +121,6 @@ Signing out clears the browser cookie. In environment mode, a copied session tok
 - `server/learn/api.js`: knowledge-check questions and server validation.
 - `learn/`: portal frontend and local progress calculation.
 
-Only Module 1’s Day 1 is currently available. The journal encourages a module-end blog while explicitly noting that only the first lesson is published. Live Hugging Face inference runs in the downloaded Python lab using the learner’s token; the portal does not make inference calls.
+Module 1 includes Day 1 and Day 2. Day 2 starts with nine authored sentences, then teaches chunking, full-vector inspection, JSON storage and vector/BM25/hybrid retrieval. It includes strategy comparison tables, a system diagram, runnable Python files and an optional TechQA extension. RAG, reranking and citations follow in the next session. The graded quiz and completion indicator currently track Day 1; the journal is shared across lessons. Live Hugging Face inference runs in the downloaded Python lab using the learner’s token; the portal does not make inference calls.
+
+Day 2 content lives in `content/learn/day-02.md`, opens at `/learn/#day2`, and is served by `/api/learn/lesson?day=2`. Its system diagram uses a text code block so it renders without a diagram library. The complete Python lab is available at `/api/learn/day2/lab`; individual files are allowlisted under `/api/learn/day2/files/:filename`. Rebuild the ZIP with `python3 scripts/build-day2-lab.py` after changing lab sources.

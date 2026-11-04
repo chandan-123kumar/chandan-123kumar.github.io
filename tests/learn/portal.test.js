@@ -57,7 +57,7 @@ test('API integration: authentication, roles, CSRF, quiz, reflection, downloads 
  const login=await r.json();assert.equal(login.user.role,'student');assert.equal(login.user.password,undefined);
  const h={Cookie:cookie.split(';')[0],'x-learn-csrf':login.csrf};
  assert.equal((await request('/admin',undefined,h)).status,403);
- r=await request('/lesson',undefined,h);assert.equal(r.status,200);const lesson=await r.json();assert.match(lesson.html,/Training and inference/);assert.match(lesson.html,/<details>/);assert.equal(lesson.quiz[0].answer,undefined);
+ r=await request('/lesson',undefined,h);assert.equal(r.status,200);const lesson=await r.json();assert.match(lesson.html,/Training vs inference/);assert.match(lesson.html,/<details>/);assert.equal(lesson.quiz[0].answer,undefined);
  r=await request('/lab',undefined,h);assert.equal(r.status,200);assert.match(r.headers.get('content-disposition'),/day-01-lab.py/);
  assert.equal((await request('/quiz',{answers:[1,2,0]},{Cookie:h.Cookie})).status,403);
  assert.equal((await request('/quiz',{answers:[1]},h)).status,400);
@@ -132,6 +132,17 @@ test('public lessons work without credentials or database access while admin end
  const base=`http://127.0.0.1:${server.address().port}/api/learn`;
  const metadata=await (await fetch(base+'/access')).json();assert.equal(metadata.publicAccess,true);
  assert.equal((await fetch(base+'/lesson')).status,200);assert.equal((await fetch(base+'/lab')).status,200);
+ const day2=await (await fetch(base+'/lesson?day=2')).json();
+ assert.equal(day2.day,2);assert.deepEqual(day2.quiz,[]);
+ assert.match(day2.html,/TRAIN_Q000/);assert.match(day2.html,/chunk.py/);assert.match(day2.html,/reciprocal rank fusion/);
+ assert.match(day2.html,/<pre><code/);assert.match(day2.html,/Practice and self-check/);
+ for(const file of ["chunk.py","embedding.py","retrieve.py","vector_key.py","documents.json"]){
+  const download=await fetch(base+"/day2/files/"+file);assert.equal(download.status,200);assert.match(download.headers.get("content-disposition"),/attachment/);
+ }
+ const zip=await fetch(base+"/day2/lab");assert.equal(zip.status,200);assert.equal(Buffer.from(await zip.arrayBuffer()).subarray(0,2).toString(),"PK");
+ assert.equal((await fetch(base+"/day2/files/not-allowed.txt")).status,404);
+ assert.equal((await fetch(base+'/lesson?day=3')).status,404);
+ assert.equal((await fetch(base+'/lesson?day=..%2Fsecret')).status,404);
  const result=await fetch(base+'/quiz',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers:[1,2,0]})});assert.equal((await result.json()).passed,true);
  assert.equal((await fetch(base+'/reflection',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({note:'My reflection explains why correct transport does not guarantee a correct answer.'})})).status,200);
  assert.equal((await fetch(base+'/admin')).status,503);

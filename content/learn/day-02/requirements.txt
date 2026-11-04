@@ -1,0 +1,4 @@
+# For neural embeddings. Standard-library TF-IDF/BM25 needs no packages.
+sentence-transformers>=3,<6
+# Keep compatibility with the Transformers client used by the lab.
+huggingface-hub<2
