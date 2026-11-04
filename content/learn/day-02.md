@@ -72,7 +72,7 @@ SEARCH EACH QUESTION
 
 ## Get the lab
 
-[Download the complete Day 2 lab (.zip)](/api/learn/day2/lab). Extract it and open the `day-02` folder. Everything you need is included:
+[Download the complete Day 2 lab (.zip)](https://raw.githubusercontent.com/chandan-123kumar/chandan-123kumar.github.io/main/content/learn/day-02-lab.zip). Extract it and open the `day-02` folder. Everything you need is included:
 
 - `chunk.py` — three chunking strategies.
 - `embedding.py` — neural embeddings and a TF-IDF baseline.
@@ -320,7 +320,7 @@ Start with readings 1 and 2. Read the abstract, evaluation setup, results and li
 
 **Bring one hypothesis to the lab:** which strategy should retrieve all necessary evidence with the least irrelevant or duplicated text? Keep the embedding model and retrieval settings fixed, record actual chunk lengths, and compare evidence recall, irrelevant text, duplicate hits, index size and processing time. Explain any disagreement between your results and a paper's findings.
 
-[Download the reading list](/api/learn/day2/files/READING.md), also included in the complete lab ZIP.
+[Open the reading list on GitHub](https://github.com/chandan-123kumar/chandan-123kumar.github.io/blob/main/content/learn/day-02/READING.md); it is also included in the complete lab ZIP.
 
 ## Next session — Turn retrieval into robust RAG
 
