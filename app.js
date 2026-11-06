@@ -13,7 +13,7 @@ app.use('/learn',portalSecurity,express.static(root+'learn',{index:'index.html'}
 // Explicit static mounts prevent source, .env and teaching source files being exposed.
 app.use('/assets',express.static(root+'assets'));
 app.use('/blog',express.static(root+'blog'));
-for(const file of ['index.html','styles.css','script.js','chandan_resume.pdf']) app.get('/'+file,(req,res)=>res.sendFile(root+file));
+for(const file of ['index.html','styles.css','script.js','chandan__resume.pdf']) app.get('/'+file,(req,res)=>res.sendFile(root+file));
 app.get('/',(req,res)=>res.sendFile(root+'index.html'));
 app.use((req,res)=>res.status(404).send('Page not found'));
 app.use((err,req,res,next)=>res.status(err.type==='entity.too.large'?413:400).json({error:'The request could not be read.'}));
