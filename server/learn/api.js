@@ -93,11 +93,13 @@ function createCourseAPI(){
   const course=express.Router();
   course.get('/lesson',async(req,res)=>{
     const day=req.query.day ?? '1';
-    if(!['1','2'].includes(day))return res.status(404).json({error:'Lesson not found.'});
-    const source=await readFile(new URL(day==='2'?'day-02.md':'day-01.md',contentURL),'utf8');
+    const lessons={'1':'day-01.md','2':'day-02.md',chunking:'langchain-chunking.md'};
+    if(!Object.hasOwn(lessons,day))return res.status(404).json({error:'Lesson not found.'});
+    const source=await readFile(new URL(lessons[day],contentURL),'utf8');
     const html=sanitizeHtml(marked.parse(source),{allowedTags:sanitizeHtml.defaults.allowedTags.concat(['details','summary']),allowedAttributes:{a:['href','title','rel'],code:['class']},transformTags:{a:sanitizeHtml.simpleTransform('a',{rel:'noopener noreferrer'})}});
-    res.json({html,day:Number(day),quiz:day==='2'?[]:QUIZ.map(({answer,explanation,...q})=>q)});
+    res.json({html,day:day==='chunking'?'chunking':Number(day),quiz:day==='1'?QUIZ.map(({answer,explanation,...q})=>q):[]});
   });
+  course.get('/chunking/lab',(req,res)=>res.download(fileURLToPath(new URL('langchain-chunking-lab.zip',contentURL)),'langchain-chunking-lab.zip'));
   const day2Files=new Set(['chunk.py','embedding.py','retrieve.py','vector_key.py','fetch_techqa.py','documents.json','requirements.txt','README.md','READING.md','test_lab.py']);
   course.get('/day2/lab',(req,res)=>res.download(fileURLToPath(new URL('day-02-lab.zip',contentURL)),'day-02-lab.zip'));
   course.get('/day2/files/:filename',(req,res)=>{

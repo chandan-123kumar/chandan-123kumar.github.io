@@ -93,6 +93,8 @@ No inference API token is needed: the public embedding model downloads from Hugg
 
 ## Step 1 — Chunk the documents
 
+For a focused library-based workshop before this step, open [Chunking with LangChain](/learn/#chunking). It compares character and recursive splitting on these same documents and exports chunks compatible with this lab.
+
 A **chunk** is a passage we index and retrieve as one unit. Too small can separate a cause from its remedy; too large can mix relevant evidence with unrelated material.
 
 Run three experiments:

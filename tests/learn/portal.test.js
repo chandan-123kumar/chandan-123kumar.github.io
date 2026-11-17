@@ -141,6 +141,16 @@ test('public lessons work without credentials or database access while admin end
  }
  const zip=await fetch(base+"/day2/lab");assert.equal(zip.status,200);assert.equal(Buffer.from(await zip.arrayBuffer()).subarray(0,2).toString(),"PK");
  assert.equal((await fetch(base+"/day2/files/not-allowed.txt")).status,404);
+ const chunking=await (await fetch(base+'/lesson?day=chunking')).json();
+ assert.equal(chunking.day,'chunking');assert.deepEqual(chunking.quiz,[]);
+ assert.match(chunking.html,/Chunking with LangChain/);
+ assert.match(chunking.html,/<pre><code class="language-text">/);
+ assert.match(chunking.html,/boundary studied today/);
+ assert.match(chunking.html,/<details>/);assert.match(chunking.html,/<summary>/);
+ assert.match(chunking.html,/href="\/api\/learn\/chunking\/lab"/);
+ const chunkingZip=await fetch(base+'/chunking/lab');assert.equal(chunkingZip.status,200);
+ assert.match(chunkingZip.headers.get('content-disposition'),/langchain-chunking-lab.zip/);
+ assert.equal(Buffer.from(await chunkingZip.arrayBuffer()).subarray(0,2).toString(),'PK');
  assert.equal((await fetch(base+'/lesson?day=3')).status,404);
  assert.equal((await fetch(base+'/lesson?day=..%2Fsecret')).status,404);
  const result=await fetch(base+'/quiz',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers:[1,2,0]})});assert.equal((await result.json()).passed,true);

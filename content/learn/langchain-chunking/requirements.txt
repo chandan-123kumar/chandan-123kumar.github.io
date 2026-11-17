@@ -1,0 +1,2 @@
+# Teaching version; installed versions are also recorded in chunks.json.
+langchain-text-splitters==1.0.0
